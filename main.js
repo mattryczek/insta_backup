@@ -21,16 +21,34 @@ async function pull_links() {
     let a_elems = document.querySelectorAll('div._aabd._aa8k._al3l a');
     let urls = Array.from(a_elems, (a) => a.href);
 
-    console.log(JSON.stringify(urls));
+    // console.log(JSON.stringify(urls));
 
     reel_grid.children[reel_grid.childElementCount - 1].id = "LAST";
 
-    while(reel_grid.children[0].id != "LAST") {
+    while (reel_grid.children[0].id != "LAST") {
         scroll(200);
         await new Promise(r => setTimeout(r, 300));
     }
 
-    scroll(300);
+    await new Promise(r => setTimeout(r, 300));
+    scroll(420);
+
+    return urls;
 }
 
-pull_links();
+async function main() {
+
+    let countcount = 0;
+
+    let results = [];
+
+    let tmp;
+
+    while (countcount++ < 5) {
+        tmp = await pull_links();
+        results.push(tmp);
+        tmp = [];
+    }
+
+    console.log(JSON.stringify(results));
+}
