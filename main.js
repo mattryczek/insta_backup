@@ -7,40 +7,30 @@ let socket = new WebSocket(`ws://${host}:${port}`);
 
 ///////////////////////////////// END WEBSOCKET /////////////////////////////////
 
-let reel_grid = document.querySelector('article div div');
-
-let scroll = function(pixels){
+function scroll(pixels) {
     window.scrollBy({
         top: pixels,
         left: 0,
         behavior: "smooth",
-      });
+    });
 }
-let row_counter = 0;
+let reel_grid = document.querySelector('article div div');
+reel_grid.id = "reel_grid";
 
-let trio = [];
+async function pull_links() {
+    let a_elems = document.querySelectorAll('div._aabd._aa8k._al3l a');
+    let urls = Array.from(a_elems, (a) => a.href);
 
-let get_urls = async function() {
-    for(row of reel_grid.children){
-        console.log(`Parsing row ${row_counter++}...`);
+    console.log(JSON.stringify(urls));
 
-        for(reel of row.children){
-            trio.push(reel.children[0].href);
-            // console.log(reel.children[0].href);
-        }
+    reel_grid.children[reel_grid.childElementCount - 1].id = "LAST";
 
-        console.log(trio);
-        trio = [];
-
-        // We can hide it instead to monitor progress
-        // and it will get autonuked
-        row.style.display = 'none';
-
-        scroll(300);
-
-        // Wait 2.5s for content to load
-        await new Promise(r => setTimeout(r, 3000));
+    while(reel_grid.children[0].id != "LAST") {
+        scroll(200);
+        await new Promise(r => setTimeout(r, 300));
     }
+
+    scroll(300);
 }
 
-get_urls();
+pull_links();
