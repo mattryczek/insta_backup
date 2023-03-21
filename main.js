@@ -7,8 +7,6 @@ let socket = new WebSocket(`ws://${host}:${port}`);
 
 ///////////////////////////////// END WEBSOCKET /////////////////////////////////
 
-let canary = true;
-
 function scroll(pixels) {
     window.scrollBy({
         top: pixels,
@@ -17,41 +15,33 @@ function scroll(pixels) {
     });
 }
 
-let reel_grid = document.querySelector('article div div');
-reel_grid.id = "reel_grid";
-
-function rip_urls(){
+function rip_urls() {
     let a_elems = document.querySelectorAll('div._aabd._aa8k._al3l a');
+
+    for (child of reel_grid.children) {
+        child.id = "PARSED";
+    }
 
     return Array.from(a_elems, (a) => a.href);
 }
 
-async function refresh_reels(){
-    reel_grid.children[reel_grid.childElementCount - 1].id = "LAST";
-
-    while (reel_grid.children[0].id != "LAST") {
+async function refresh_reels() {
+    while (reel_grid.children[0].id == "PARSED") {
         scroll(200);
-        await new Promise(r => setTimeout(r, 300));
-    }
-
-    while (reel_grid.children[0].id == "LAST") {
-        scroll(50);
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 200));
     }
 }
 
 async function pull_links() {
     let links = rip_urls();
-    refresh_reels();
-
-    while(canary) {
-        links.concat(rip_urls);
-        await refresh_reels();
-    }
+    await refresh_reels();
 
     return links;
 }
 
 async function main() {
+    let reel_grid = document.querySelector('article div div');
+    reel_grid.id = "reel_grid";
+
     await console.log(JSON.stringify(pull_links()));
 }
