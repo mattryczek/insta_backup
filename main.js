@@ -34,10 +34,10 @@ async function refresh_reels() {
 
 let reel_grid = document.querySelector('article div div');
 
-async function main() {
+async function main(num_links) {
     reel_grid.id = "reel_grid";
     
-    let link_limit = 50;
+    let link_limit = num_links;
 
     // Grab initially loaded links & refresh
     let links = rip_urls();
