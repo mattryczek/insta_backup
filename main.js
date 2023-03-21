@@ -7,6 +7,8 @@ let socket = new WebSocket(`ws://${host}:${port}`);
 
 ///////////////////////////////// END WEBSOCKET /////////////////////////////////
 
+let canary = true;
+
 function scroll(pixels) {
     window.scrollBy({
         top: pixels,
@@ -14,15 +16,17 @@ function scroll(pixels) {
         behavior: "smooth",
     });
 }
+
 let reel_grid = document.querySelector('article div div');
 reel_grid.id = "reel_grid";
 
-async function pull_links() {
+function rip_urls(){
     let a_elems = document.querySelectorAll('div._aabd._aa8k._al3l a');
-    let urls = Array.from(a_elems, (a) => a.href);
 
-    // console.log(JSON.stringify(urls));
+    return Array.from(a_elems, (a) => a.href);
+}
 
+async function refresh_reels(){
     reel_grid.children[reel_grid.childElementCount - 1].id = "LAST";
 
     while (reel_grid.children[0].id != "LAST") {
@@ -30,25 +34,24 @@ async function pull_links() {
         await new Promise(r => setTimeout(r, 300));
     }
 
-    await new Promise(r => setTimeout(r, 300));
-    scroll(420);
+    while (reel_grid.children[0].id == "LAST") {
+        scroll(50);
+        await new Promise(r => setTimeout(r, 100));
+    }
+}
 
-    return urls;
+async function pull_links() {
+    let links = rip_urls();
+    refresh_reels();
+
+    while(canary) {
+        links.concat(rip_urls);
+        await refresh_reels();
+    }
+
+    return links;
 }
 
 async function main() {
-
-    let countcount = 0;
-
-    let results = [];
-
-    let tmp;
-
-    while (countcount++ < 5) {
-        tmp = await pull_links();
-        results.push(tmp);
-        tmp = [];
-    }
-
-    console.log(JSON.stringify(results));
+    await console.log(JSON.stringify(pull_links()));
 }
