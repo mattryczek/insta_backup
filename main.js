@@ -49,11 +49,9 @@ async function main() {
     // full new grid.
     while(links.length < link_limit) {
         links = links.concat(rip_urls());
-        
         await refresh_reels();
-
-        console.log(links.length);
     }
 
+    console.log(`Links grabbed: ${links.length}`);
     return JSON.stringify(links);
 }
