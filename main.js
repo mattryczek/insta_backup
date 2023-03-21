@@ -28,20 +28,32 @@ function rip_urls() {
 async function refresh_reels() {
     while (reel_grid.children[0].id == "PARSED") {
         scroll(200);
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise(r => setTimeout(r, 420));
     }
 }
 
-async function pull_links() {
-    let links = rip_urls();
-    await refresh_reels();
-
-    return links;
-}
+let reel_grid = document.querySelector('article div div');
 
 async function main() {
-    let reel_grid = document.querySelector('article div div');
     reel_grid.id = "reel_grid";
+    
+    let link_limit = 50;
 
-    await console.log(JSON.stringify(pull_links()));
+    // Grab initially loaded links & refresh
+    let links = rip_urls();
+    await refresh_reels();
+    
+
+    // Force insta to load new reels
+    // and grab then when we have a 
+    // full new grid.
+    while(links.length < link_limit) {
+        links = links.concat(rip_urls());
+        
+        await refresh_reels();
+
+        console.log(links.length);
+    }
+
+    return JSON.stringify(links);
 }
