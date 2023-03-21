@@ -34,16 +34,13 @@ async function refresh_reels() {
 
 let reel_grid = document.querySelector('article div div');
 
-async function main(num_links) {
+async function main(link_limit) {
     reel_grid.id = "reel_grid";
-    
-    let link_limit = num_links;
 
     // Grab initially loaded links & refresh
     let links = rip_urls();
     await refresh_reels();
     
-
     // Force insta to load new reels
     // and grab then when we have a 
     // full new grid.
